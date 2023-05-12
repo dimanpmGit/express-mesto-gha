@@ -26,6 +26,9 @@ const errorReturn = (res, err) => {
   else if (err.name === 'CastError') {
     return res.status(400).send({ message: 'Переданы некорректные данные в методы поиска пользователя' });
   }
+  else if (err.name === 'IncorrectUserDataError') {
+    return res.status(400).send({ message: err.message });
+  }
   return res.status(500).send({ message: 'Произошла ошибка' });
 };
 
@@ -57,8 +60,9 @@ const updateProfile = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name: name ,about: about }, { new: true })
     .then(user => {
-      if (name.length < 2 || about.length > 30) {
-        return Promise.reject(new IncorrectUserDataError('Переданы некорректные данные в методы поиска пользователя'));
+      if ((name && name.length < 2) || (about && about.length > 30)) {
+        console.log(name.length);
+        return Promise.reject(new IncorrectUserDataError('Переданы некорректные данные в методы обновления профиля'));
       }
       return res.send({ data: user });
     })
