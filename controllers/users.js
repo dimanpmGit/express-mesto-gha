@@ -7,6 +7,9 @@ const errorReturn = (res, err) => {
   else if (err.name === 'ValidationError') {
     return res.status(400).send({ message: 'Переданы некорректные данные в методы создания пользователя' });
   }
+  else if (err.name === 'Error') {
+    return res.status(400).send({ message: 'Переданы некорректные данные в методы поиска пользователя' });
+  }
   return res.status(500).send({ message: 'Произошла ошибка' });
 };
 
@@ -18,7 +21,12 @@ const getAllUsers = (req, res) => {
 
 const getOneUser = (req, res) => {
   User.findById(req.params.id)
-    .then(user => res.send({ data: user }))
+    .then(user => {
+      if (user) {
+        return res.send({ data: user })
+      };
+      return Promise.reject(new Error("Ошибка. Что-то пошло не так..."))
+    })
     .catch(err => errorReturn(res, err));
 };
 
