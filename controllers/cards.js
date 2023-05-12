@@ -14,7 +14,6 @@ const errorReturn = (res, err) => {
 const getAllCards = (req, res) => {
   Card.find({})
     .then(card => res.send({ data: card }))
-    //.catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
     .catch(err => errorReturn(res, err));
 }
 
@@ -23,28 +22,24 @@ const createCard = (req, res) => {
   const owner = req.user._id;
   Card.create({ name, link, owner })
     .then(card => res.send({ data: card }))
-    //.catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
     .catch(err => errorReturn(res, err));
 }
 
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then(card => res.send({ data: card }))
-    //.catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
     .catch(err => errorReturn(res, err));
 };
 
 const likeCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then(card => res.send({ data: card }))
-    //.catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
     .catch(err => errorReturn(res, err));
 };
 
 const unlikeCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then(card => res.send({ data: card }))
-    //.catch(err => res.status(500).send({ message: 'Произошла ошибка' }));
     .catch(err => errorReturn(res, err));
 };
 
