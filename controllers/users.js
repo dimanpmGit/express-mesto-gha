@@ -56,7 +56,12 @@ const createUser = (req, res) => {
 const updateProfile = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name: name ,about: about }, { new: true })
-    .then(user => res.send({ data: user }))
+    .then(user => {
+      if (name.length < 2 || about.length > 30) {
+        return Promise.reject(new IncorrectUserDataError('Переданы некорректные данные в методы поиска пользователя'));
+      }
+      return res.send({ data: user });
+    })
     .catch(err => errorReturn(res, err));
 };
 
