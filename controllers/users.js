@@ -55,14 +55,14 @@ const createUser = (req, res) => {
 
 const updateProfile = (req, res) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name: name }, { about: about })
+  User.findByIdAndUpdate(req.user._id, { name: name }, { about: about }, { new: true })
     .then(user => res.send({ data: user }))
     .catch(err => errorReturn(res, err));
 };
 
 const updateAvatar = (req, res) => {
   const { name, avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name: name }, { avatar: avatar })
+  User.findByIdAndUpdate(req.user._id, { name: name }, { avatar: avatar }, { new: true })
     .then(user => res.send({ data: user }))
     .catch(err => errorReturn(res, err));
 };
