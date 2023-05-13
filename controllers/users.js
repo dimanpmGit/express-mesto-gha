@@ -17,6 +17,7 @@ class IncorrectUserDataError extends Error {
 }
 
 const errorReturn = (res, err) => {
+  //console.log(err);
   if (err.name === 'UserFindError') {
     return res.status(404).send({ message: err.message });
   }
@@ -49,6 +50,17 @@ const getOneUser = (req, res) => {
     .catch(err => errorReturn(res, err));
 };
 
+const checkData = (data) => {
+  for ( const [key, value] of Object.entries(data)) {
+    //console.log(value);
+    //console.log(`${key}: ${value}`);
+    if (value && (value.length < 2 || value.length > 30)) {
+      //console.log(`${key}: ${value}`);
+      return Promise.reject(new IncorrectUserDataError('Переданы некорректные данные в методы обновления профиля'));
+    }
+  }
+}
+
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
@@ -60,8 +72,7 @@ const updateProfile = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name: name ,about: about }, { new: true })
     .then(user => {
-      if ((name && name.length < 2) || (about && about.length > 30)) {
-        console.log(name.length);
+      if ((name && (name.length < 2 || name.length > 30)) || (about && (about.length < 2 || about.length > 30))) {
         return Promise.reject(new IncorrectUserDataError('Переданы некорректные данные в методы обновления профиля'));
       }
       return res.send({ data: user });
