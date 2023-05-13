@@ -72,15 +72,10 @@ const unlikeCard = (req, res) => {
     .catch(err => errorReturn(res, err));
 };
 
-/*const wrongUrl = (req, res) => {
-  return res.status(404).send({ message: 'Указан неверный путь' });
-}*/
-
 module.exports = {
   getAllCards,
   createCard,
   deleteCard,
   likeCard,
   unlikeCard,
-  //wrongUrl
 };
