@@ -46,4 +46,4 @@
 
 **GitHub Pages**
 
-* [Ссылка на GitHub Pages](https://dimanpmgit.github.io/express-mesto-gha)
+* [Ссылка на GitHub Pages](https://github.com/dimanpmGit/express-mesto-gha)
