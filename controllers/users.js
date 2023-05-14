@@ -1,78 +1,52 @@
+const {
+  BAD_REQUEST,
+  NOT_FOUND,
+} = require('../utils/constants');
+
+const { errorReturn } = require('../utils/utils');
 const User = require('../models/user');
-
-class UserFindError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "UserFindError";
-    this.statusCode = 404;
-  }
-}
-
-class IncorrectUserDataError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "IncorrectUserDataError";
-    this.statusCode = 400;
-  }
-}
-
-const errorReturn = (res, err) => {
-  if (err.name === 'UserFindError') {
-    return res.status(404).send({ message: err.message });
-  }
-  else if (err.name === 'ValidationError') {
-    return res.status(400).send({ message: 'Переданы некорректные данные в методы создания пользователя' });
-  }
-  else if (err.name === 'CastError') {
-    return res.status(400).send({ message: 'Переданы некорректные данные в методы поиска пользователя' });
-  }
-  else if (err.name === 'IncorrectUserDataError') {
-    return res.status(400).send({ message: err.message });
-  }
-  return res.status(500).send({ message: 'Произошла ошибка' });
-};
 
 const getAllUsers = (req, res) => {
   User.find({ })
-    .then(user => res.send({ data: user }))
-    .catch(err => errorReturn(res, err));
-}
+    .then((user) => res.send(user))
+    .catch((err) => errorReturn(res, err));
+};
 
 const getOneUser = (req, res) => {
   User.findById(req.params.id)
-    .then(user => {
-      if (user) {
-        return res.send({ data: user })
-      };
-      return Promise.reject(new UserFindError('Пользователь не найден'))
+    .then((user) => {
+      if (!user) {
+        return res.status(NOT_FOUND).send({ message: 'Пользователь не найден' });
+      }
+      return res.send(user);
     })
-    .catch(err => errorReturn(res, err));
+    .catch((err) => errorReturn(res, err));
 };
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then(user => res.send({ data: user }))
-    .catch(err => errorReturn(res, err));
+    .then((user) => res.send(user))
+    .catch((err) => errorReturn(res, err));
 };
 
 const updateProfile = (req, res) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name: name ,about: about }, { new: true })
-    .then(user => {
-      if ((name && (name.length < 2 || name.length > 30)) || (about && (about.length < 2 || about.length > 30))) {
-        return Promise.reject(new IncorrectUserDataError('Переданы некорректные данные в методы обновления профиля'));
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+    .then((user) => {
+      if (!user) {
+        return res.status(BAD_REQUEST).send({ message: 'Указан некорректный id пользователя' });
       }
-      return res.send({ data: user });
+      return res.send(user);
     })
-    .catch(err => errorReturn(res, err));
+    .catch((err) => errorReturn(res, err));
 };
 
 const updateAvatar = (req, res) => {
   const { name, avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name: name, avatar: avatar }, { new: true })
-    .then(user => res.send({ data: user }))
-    .catch(err => errorReturn(res, err));
+  User.findByIdAndUpdate(req.user._id, { name, avatar }, { new: true, runValidators: true })
+    .then((user) => res.send(user))
+    .catch((err) => errorReturn(res, err));
 };
 
 module.exports = {
@@ -80,5 +54,5 @@ module.exports = {
   getOneUser,
   createUser,
   updateProfile,
-  updateAvatar
-}
+  updateAvatar,
+};
