@@ -2,6 +2,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const NotFoundError = require('../errors/not-found-err');
+const AuthError = require('../errors/auth-err');
+const BadRequestError = require('../errors/bad-request-err');
 
 const {
   BAD_REQUEST,
@@ -11,21 +14,26 @@ const {
 const { errorReturn } = require('../utils/utils');
 const User = require('../models/user');
 
-const getAllUsers = (req, res) => {
+const getAllUsers = (req, res, next) => {
   User.find({ })
     .then((user) => res.send(user))
-    .catch((err) => errorReturn(res, err));
+    //.catch((err) => errorReturn(res, err));
+    .catch(next);
 };
 
-const getOneUser = (req, res) => {
+const getOneUser = (req, res, next) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        return res.status(NOT_FOUND).send({ message: 'Пользователь не найден' });
+        //return res.status(NOT_FOUND).send({ message: 'Пользователь не найден' });
+        const err = new AuthError('Пользователь не найден');
+        err.statusCode = 401;
+        next(err);
       }
       return res.send(user);
     })
-    .catch((err) => errorReturn(res, err));
+    //.catch((err) => errorReturn(res, err));
+    .catch(next);
 };
 
 const createUser = (req, res) => {
@@ -45,7 +53,8 @@ const createUser = (req, res) => {
       password: hash,
     }))
     .then((user) => res.send(user))
-    .catch((err) => errorReturn(res, err));
+    //.catch((err) => errorReturn(res, err));
+    .catch(next);
 };
 
 const updateProfile = (req, res) => {
@@ -54,17 +63,22 @@ const updateProfile = (req, res) => {
     .then((user) => {
       if (!user) {
         return res.status(BAD_REQUEST).send({ message: 'Указан некорректный id пользователя' });
+        const err = new AuthError('Пользователь не найден');
+        err.statusCode = 401;
+        next(err);
       }
       return res.send(user);
     })
-    .catch((err) => errorReturn(res, err));
+    //.catch((err) => errorReturn(res, err));
+    .catch(next);
 };
 
 const updateAvatar = (req, res) => {
   const { name, avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, avatar }, { new: true, runValidators: true })
     .then((user) => res.send(user))
-    .catch((err) => errorReturn(res, err));
+    //.catch((err) => errorReturn(res, err));
+    .catch(next);
 };
 
 const login = (req, res) => {
@@ -93,11 +107,8 @@ const login = (req, res) => {
           _id: user._id,
         });
     })
-    .catch((err) => {
-      res.status(401).send({
-        message: err.message,
-      });
-    });
+    //.catch((err) => {res.status(401).send({ message: err.message })});
+    .catch(next);
 };
 
 const getCurrentUser = (req, res) => {
@@ -108,7 +119,8 @@ const getCurrentUser = (req, res) => {
       }
       return res.send(user);
     })
-    .catch((err) => errorReturn(res, err));
+    //.catch((err) => errorReturn(res, err));
+    .catch(next);
 };
 
 module.exports = {

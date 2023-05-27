@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable linebreak-style */
 // Методы работы с карточками
 const Card = require('../models/card');
@@ -22,25 +23,19 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  //if (req.user._id !== )
   Card.findById(req.params.cardId)
     .then((card) => {
-      /*if (card.owner.id === req.user._id) {
-        console.log('Ура');
-      } else {
-        console.log('Не ура');
+      if (card.owner.toString() === req.user._id) {
+        //return Card.findByIdAndRemove(req.params.cardId);
+        return Card.deleteOne();
       }
-      console.log(card.owner.id);
-      console.log(req.user._id);*/
-      return res.send(card);
     })
-  /*Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        return res.status(NOT_FOUND).send({ message: 'Карточка не найдена' });
+        return res.status(NOT_FOUND).send({ message: 'Удалить карточку может только владелец' });
       }
-      return res.send(card);
-    })*/
+      return res.send({ message: 'Карточка удалена' });
+    })
     .catch((err) => errorReturn(res, err));
 };
 
