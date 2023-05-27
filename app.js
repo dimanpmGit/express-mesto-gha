@@ -3,20 +3,27 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const usersRouter = require('./routes/users');
+const {
+  login,
+  createUser,
+  getCurrentUser,
+} = require('./controllers/users');
 const cardsRouter = require('./routes/cards');
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 const app = express();
 
 app.use(bodyParser.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '645cad16710090480993ace5',
-  };
-  next();
-});
+// роуты, не требующие авторизации,
+// например, регистрация и логин
+app.post('/signin', login);
+app.post('/signup', createUser);
 
+// авторизация
+app.use(auth);
+app.get('/users/me', getCurrentUser);
 app.use('/', usersRouter);
 app.use('/', cardsRouter);
 app.use('/*', (req, res) => res.status(404).send({ message: 'Страница не найдена' }));

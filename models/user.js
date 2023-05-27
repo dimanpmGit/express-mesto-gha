@@ -1,8 +1,11 @@
+/* eslint-disable import/newline-after-import */
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-undef */
 const mongoose = require('mongoose');
-// eslint-disable-next-line import/no-extraneous-dependencies
+const { Schema } = mongoose;
 const validator = require('validator');
 
-const userSchema = new mongoose.Schema(
+const userSchema = new Schema(
   {
     name: {
       type: String,
@@ -37,9 +40,25 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       minlength: 8,
+      select: false,
     },
   },
   { versionKey: false },
 );
+
+userSchema.statics.findUserByCredentials = (email, password) => this.findOne({ email })
+  .then((user) => {
+    if (!user) {
+      return Promise.reject(new Error('Неправильные почта или пароль'));
+    }
+
+    return bcrypt.compare(password, user.password)
+      .then((matched) => {
+        if (!matched) {
+          return Promise.reject(new Error('Неправильные почта или пароль'));
+        }
+        return user;
+      });
+  });
 
 module.exports = mongoose.model('user', userSchema);
