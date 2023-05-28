@@ -12,7 +12,6 @@ const {
   idValidation,
 } = require('../middlewares/validations');
 
-
 router.get('/', getAllCards);
 router.post('/', createCard);
 router.delete('/:id', deleteCard);
