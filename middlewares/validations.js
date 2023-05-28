@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const { celebrate, Joi } = require('celebrate');
 const { URL_PATTERN } = require('../utils/constants');
 
@@ -20,5 +21,5 @@ const signinValidation = celebrate({
 
 module.exports = {
   signupValidation,
-  signinValidation
+  signinValidation,
 };
