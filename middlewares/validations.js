@@ -34,8 +34,8 @@ const updateAvatarValidation = celebrate({
 });
 
 const userIdValidation = celebrate({
-  body: Joi.object().keys({
-    avatar: Joi.string().pattern(ID_PATTERN),
+  params: Joi.object().keys({
+    id: Joi.string().pattern(ID_PATTERN),
   }).unknown(true),
 });
 
