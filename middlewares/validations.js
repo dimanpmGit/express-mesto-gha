@@ -33,7 +33,7 @@ const updateAvatarValidation = celebrate({
   }).unknown(true),
 });
 
-const userIdValidation = celebrate({
+const idValidation = celebrate({
   params: Joi.object().keys({
     id: Joi.string().pattern(ID_PATTERN),
   }).unknown(true),
@@ -44,5 +44,5 @@ module.exports = {
   signinValidation,
   updateProfileValidation,
   updateAvatarValidation,
-  userIdValidation,
+  idValidation,
 };
