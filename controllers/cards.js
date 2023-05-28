@@ -3,6 +3,7 @@
 // Методы работы с карточками
 const Card = require('../models/card');
 const NotFoundError = require('../errors/not-found-err');
+const NotCardOwnerError = require('../errors/not-card-owner-err');
 
 const getAllCards = (req, res, next) => {
   Card.find({})
@@ -21,13 +22,16 @@ const createCard = (req, res, next) => {
 const deleteCard = (req, res, next) => {
   Card.findById(req.params.id)
     .then((card) => {
+      if (!card) {
+        throw new NotFoundError('Карточка не найдена');
+      }
       if (card.owner.toString() === req.user._id) {
         return Card.findByIdAndRemove(req.params.id);
       }
     })
     .then((card) => {
       if (!card) {
-        throw new NotFoundError('Удалить карточку может только владелец');
+        throw new NotCardOwnerError('Удалить карточку может только владелец');
       }
       return res.send({ message: 'Карточка удалена' });
     })
