@@ -94,6 +94,7 @@ const login = (req, res, next) => {
       })
         .send({
           _id: user._id,
+          token,
         });
     })
     .catch(next);
