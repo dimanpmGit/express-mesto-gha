@@ -10,4 +10,5 @@ const getJwtToken = (id) => {
 
 module.exports = {
   getJwtToken,
+  JWT_SECRET,
 };
