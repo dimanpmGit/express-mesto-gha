@@ -33,7 +33,7 @@ app.post('/signin', signinValidation, login);
 app.post('/signup', signupValidation, createUser);
 
 // авторизация
-//app.use(auth);
+
 app.get('/users/me', getCurrentUserValidation, getCurrentUser);
 app.use('/', usersRouter);
 app.use('/', cardsRouter);
