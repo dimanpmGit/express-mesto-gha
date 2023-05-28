@@ -13,6 +13,7 @@ const {
 } = require('./controllers/users');
 const cardsRouter = require('./routes/cards');
 const auth = require('./middlewares/auth');
+const { signupValidation, signinValidation } = require('./middlewares/validations.js');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -21,8 +22,8 @@ app.use(bodyParser.json());
 
 // роуты, не требующие авторизации,
 // например, регистрация и логин
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', signinValidation, login);
+app.post('/signup', signupValidation, createUser);
 
 // авторизация
 app.use(auth);
