@@ -101,6 +101,7 @@ const login = (req, res, next) => {
 
 const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
+    .orFail()
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
