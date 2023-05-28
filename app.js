@@ -1,3 +1,6 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-unused-vars */
+/* eslint-disable comma-dangle */
 // app.js — входной файл
 const express = require('express');
 const mongoose = require('mongoose');
@@ -27,8 +30,17 @@ app.get('/users/me', getCurrentUser);
 app.use('/', usersRouter);
 app.use('/', cardsRouter);
 app.use('/*', (req, res) => res.status(404).send({ message: 'Страница не найдена' }));
+
+// подключаемся к серверу mongo
+mongoose.connect('mongodb://localhost:27017/mestodb', {});
+
+// Мидлвар централизованной обработки ошибок
 app.use((err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 500
+  if (err.code === 11000) {
+    err.statusCode = 409;
+    err.message = 'Пользователь с таким email уже зарегистрирован';
+  }
   const { statusCode = 500, message } = err;
 
   res
@@ -39,9 +51,5 @@ app.use((err, req, res, next) => {
         ? 'На сервере произошла ошибка'
         : message
     });
-});
-
-// подключаемся к серверу mongo
-mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 app.listen(PORT);
