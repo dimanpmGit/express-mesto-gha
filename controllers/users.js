@@ -7,7 +7,7 @@ const NotFoundError = require('../errors/not-found-err');
 const AuthError = require('../errors/auth-err');
 const BadRequestError = require('../errors/bad-request-err');
 const User = require('../models/user');
-const SALT_ROUNDS = require('../utils/constants');
+const { SALT_ROUNDS } = require('../utils/constants');
 
 const getAllUsers = (req, res, next) => {
   User.find({ })
