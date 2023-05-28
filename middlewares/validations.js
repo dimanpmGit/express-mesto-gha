@@ -1,7 +1,7 @@
 /* eslint-disable comma-dangle */
 /* eslint-disable import/no-extraneous-dependencies */
 const { celebrate, Joi } = require('celebrate');
-const { URL_PATTERN } = require('../utils/constants');
+const { URL_PATTERN, ID_PATTERN } = require('../utils/constants');
 
 const signupValidation = celebrate({
   body: Joi.object().keys({
@@ -33,9 +33,16 @@ const updateAvatarValidation = celebrate({
   }).unknown(true),
 });
 
+const userIdValidation = celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().pattern(ID_PATTERN),
+  }).unknown(true),
+});
+
 module.exports = {
   signupValidation,
   signinValidation,
   updateProfileValidation,
   updateAvatarValidation,
+  userIdValidation,
 };
