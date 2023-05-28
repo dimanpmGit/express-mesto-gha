@@ -6,6 +6,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
 const usersRouter = require('./routes/users');
 const {
   login,
@@ -35,6 +36,9 @@ app.use('/*', (req, res) => res.status(404).send({ message: 'Страница н
 
 // подключаемся к серверу mongo
 mongoose.connect('mongodb://localhost:27017/mestodb', {});
+
+// обработчики ошибок
+app.use(errors()); // обработчик ошибок celebrate
 
 // Мидлвар централизованной обработки ошибок
 app.use((err, req, res, next) => {
