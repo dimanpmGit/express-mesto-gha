@@ -2,7 +2,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 // eslint-disable-next-line import/no-extraneous-dependencies
 const bcrypt = require('bcryptjs');
-const { getJwtToken } = require('../utils/jwt');
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../utils/jwt');
 const NotFoundError = require('../errors/not-found-err');
 const AuthError = require('../errors/auth-err');
 const BadRequestError = require('../errors/bad-request-err');
@@ -87,7 +88,7 @@ const login = (req, res, next) => {
         });
     })
     .then((user) => {
-      const token = getJwtToken({ _id: user._id });
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
