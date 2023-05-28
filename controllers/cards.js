@@ -3,7 +3,7 @@
 // Методы работы с карточками
 const Card = require('../models/card');
 const AuthError = require('../errors/auth-err');
-const BadRequestError = require('../errors/bad-request-err');
+const NotFoundError = require('../errors/not-found-err');
 
 const getAllCards = (req, res, next) => {
   Card.find({})
@@ -20,10 +20,10 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findById(req.params.cardId)
+  Card.findById(req.params.id)
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
-        return Card.findByIdAndRemove(req.params.cardId);
+        return Card.findByIdAndRemove(req.params.id);
       }
     })
     .then((card) => {
@@ -37,13 +37,13 @@ const deleteCard = (req, res, next) => {
 
 const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    req.params.id,
     { $addToSet: { likes: req.user._id } },
     { new: true, runValidators: true },
   )
     .then((card) => {
       if (!card) {
-        throw new BadRequestError('Карточка не найдена');
+        throw new NotFoundError('Карточка не найдена');
       }
       return res.send(card);
     })
@@ -52,13 +52,13 @@ const likeCard = (req, res, next) => {
 
 const unlikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    req.params.id,
     { $pull: { likes: req.user._id } },
     { new: true, runValidators: true },
   )
     .then((card) => {
       if (!card) {
-        throw new BadRequestError('Карточка не найдена');
+        throw new NotFoundError('Карточка не найдена');
       }
       return res.send(card);
     })
