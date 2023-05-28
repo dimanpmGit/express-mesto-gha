@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable import/extensions */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
@@ -15,7 +16,11 @@ const {
 } = require('./controllers/users');
 const cardsRouter = require('./routes/cards');
 const auth = require('./middlewares/auth');
-const { signupValidation, signinValidation } = require('./middlewares/validations.js');
+const {
+  signupValidation,
+  signinValidation,
+  getCurrentUserValidation,
+} = require('./middlewares/validations.js');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -29,7 +34,7 @@ app.post('/signup', signupValidation, createUser);
 
 // авторизация
 app.use(auth);
-app.get('/users/me', getCurrentUser);
+app.get('/users/me', getCurrentUserValidation, getCurrentUser);
 app.use('/', usersRouter);
 app.use('/', cardsRouter);
 app.use('/*', (req, res) => res.status(404).send({ message: 'Страница не найдена' }));
