@@ -87,7 +87,7 @@ const login = (req, res, next) => {
         });
     })
     .then((user) => {
-      const token = getJwtToken({ _id: user._id }, 'secret-key', { expiresIn: '7d' });
+      const token = getJwtToken({ _id: user._id });
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
