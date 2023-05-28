@@ -20,14 +20,22 @@ const signinValidation = celebrate({
   }).unknown(true),
 });
 
-const getCurrentUserValidation = celebrate({
-  body: Joi.object({
-    token: Joi.string().required().regex(/abc\d{3}/)
+const updateProfileValidation = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+  }).unknown(true),
+});
+
+const updateAvatarValidation = celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().pattern(URL_PATTERN),
   }).unknown(true),
 });
 
 module.exports = {
   signupValidation,
   signinValidation,
-  getCurrentUserValidation,
+  updateProfileValidation,
+  updateAvatarValidation,
 };
