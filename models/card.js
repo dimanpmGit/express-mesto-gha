@@ -1,5 +1,5 @@
+/* eslint-disable import/newline-after-import */
 const mongoose = require('mongoose');
-
 const cardSchema = new mongoose.Schema(
   {
     name: {

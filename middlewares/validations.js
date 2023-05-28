@@ -39,10 +39,18 @@ const idValidation = celebrate({
   }).unknown(true),
 });
 
+const createCardValidation = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    link: Joi.string().required().pattern(URL_PATTERN),
+  }),
+});
+
 module.exports = {
   signupValidation,
   signinValidation,
   updateProfileValidation,
   updateAvatarValidation,
   idValidation,
+  createCardValidation,
 };

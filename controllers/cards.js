@@ -2,7 +2,6 @@
 /* eslint-disable linebreak-style */
 // Методы работы с карточками
 const Card = require('../models/card');
-const AuthError = require('../errors/auth-err');
 const NotFoundError = require('../errors/not-found-err');
 
 const getAllCards = (req, res, next) => {
@@ -28,7 +27,7 @@ const deleteCard = (req, res, next) => {
     })
     .then((card) => {
       if (!card) {
-        throw new AuthError('Удалить карточку может только владелец');
+        throw new NotFoundError('Удалить карточку может только владелец');
       }
       return res.send({ message: 'Карточка удалена' });
     })
