@@ -2,8 +2,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 // eslint-disable-next-line import/no-extraneous-dependencies
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { getJwtToken, JWT_SECRET } = require('../utils/jwt');
+const { getJwtToken } = require('../utils/jwt');
 const NotFoundError = require('../errors/not-found-err');
 const AuthError = require('../errors/auth-err');
 const BadRequestError = require('../errors/bad-request-err');
