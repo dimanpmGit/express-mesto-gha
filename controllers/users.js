@@ -18,7 +18,7 @@ const getOneUser = (req, res, next) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        throw new AuthError('Пользователь не найден');
+        throw new NotFoundError('Пользователь не найден');
       }
       return res.send(user);
     })
