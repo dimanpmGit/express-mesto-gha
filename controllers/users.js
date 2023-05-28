@@ -2,7 +2,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 // eslint-disable-next-line import/no-extraneous-dependencies
 const bcrypt = require('bcryptjs');
-const { getJwtToken } = require('../utils/jwt');
+const jwt = require('jsonwebtoken');
 const NotFoundError = require('../errors/not-found-err');
 const AuthError = require('../errors/auth-err');
 const BadRequestError = require('../errors/bad-request-err');
@@ -87,7 +87,7 @@ const login = (req, res, next) => {
         });
     })
     .then((user) => {
-      const token = getJwtToken({ id: user._id });
+      const token = jwt.sign({ _id: user._id }, 'secret-key', { expiresIn: '7d' });
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
@@ -103,7 +103,6 @@ const login = (req, res, next) => {
 
 const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
-    .orFail()
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
