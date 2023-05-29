@@ -1,9 +1,8 @@
-/* eslint-disable import/newline-after-import */
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable no-undef */
 const mongoose = require('mongoose');
+
 const { Schema } = mongoose;
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new Schema(
   {
@@ -40,7 +39,6 @@ const userSchema = new Schema(
       type: String,
       required: true,
       select: false,
-      minlength: 8,
     },
   },
   { versionKey: false },

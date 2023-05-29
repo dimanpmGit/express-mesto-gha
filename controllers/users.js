@@ -1,19 +1,17 @@
-/* eslint-disable arrow-parens */
-/* eslint-disable import/no-extraneous-dependencies */
-// eslint-disable-next-line import/no-extraneous-dependencies
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../utils/jwt');
 const NotFoundError = require('../errors/not-found-err');
 const AuthError = require('../errors/auth-err');
-const BadRequestError = require('../errors/bad-request-err');
+const ConflictError = require('../errors/conflict-err');
+const ValidationError = require('../errors/validation-err');
 const User = require('../models/user');
 const { SALT_ROUNDS } = require('../utils/constants');
 
 const getAllUsers = (req, res, next) => {
   User.find({ })
     .then((user) => res.send(user))
-    .catch(err => next(err));
+    .catch((err) => next(err));
 };
 
 const getOneUser = (req, res, next) => {
@@ -43,14 +41,23 @@ const createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.send({
-      _id: user._id,
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
-      email: user.email,
-    }))
-    .catch(next);
+    .then((user) => res
+      .status(201)
+      .send({
+        _id: user._id,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+      }))
+    .catch((err) => {
+      if (err.code === 11000) {
+        next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
+      } else if (err.name === 'ValidationError') {
+        next(new ValidationError('Переданы некорректные данные в методы пользователя'));
+      }
+      next(err);
+    });
 };
 
 const updateProfile = (req, res, next) => {
@@ -58,7 +65,7 @@ const updateProfile = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        throw new BadRequestError('Указан некорректный id пользователя');
+        throw new NotFoundError('Пользователь с указанным id не найден');
       }
       return res.send(user);
     })

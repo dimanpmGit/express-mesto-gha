@@ -1,7 +1,5 @@
-/* eslint-disable comma-dangle */
-/* eslint-disable import/no-extraneous-dependencies */
 const { celebrate, Joi } = require('celebrate');
-const { URL_PATTERN, ID_PATTERN } = require('../utils/constants');
+const { URL_PATTERN } = require('../utils/constants');
 
 const signupValidation = celebrate({
   body: Joi.object().keys({
@@ -10,33 +8,33 @@ const signupValidation = celebrate({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().pattern(URL_PATTERN),
-  }).unknown(true),
+  }),
 });
 
 const signinValidation = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
-  }).unknown(true),
+  }),
 });
 
 const updateProfileValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-  }).unknown(true),
+  }),
 });
 
 const updateAvatarValidation = celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().pattern(URL_PATTERN),
-  }).unknown(true),
+  }),
 });
 
 const idValidation = celebrate({
   params: Joi.object().keys({
-    id: Joi.string().pattern(ID_PATTERN),
-  }).unknown(true),
+    id: Joi.string().length(24).hex().required(),
+  }),
 });
 
 const createCardValidation = celebrate({

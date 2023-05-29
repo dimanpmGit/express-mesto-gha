@@ -1,5 +1,3 @@
-/* eslint-disable consistent-return */
-/* eslint-disable linebreak-style */
 // Методы работы с карточками
 const Card = require('../models/card');
 const NotFoundError = require('../errors/not-found-err');
@@ -15,7 +13,7 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Card.create({ name, link, owner })
-    .then((card) => res.send(card))
+    .then((card) => res.status(201).send(card))
     .catch(next);
 };
 
@@ -23,18 +21,14 @@ const deleteCard = (req, res, next) => {
   Card.findById(req.params.id)
     .then((card) => {
       if (!card) {
-        throw new NotFoundError('Карточка не найдена');
+        next(new NotFoundError('Карточка не найдена'));
       }
-      if (card.owner.toString() === req.user._id) {
-        return Card.findByIdAndRemove(req.params.id);
+      if (card.owner.toString() !== req.user._id) {
+        next(new NotCardOwnerError('Удалить карточку может только владелец'));
       }
+      return Card.findByIdAndRemove(req.params.id);
     })
-    .then((card) => {
-      if (!card) {
-        throw new NotCardOwnerError('Удалить карточку может только владелец');
-      }
-      return res.send({ message: 'Карточка удалена' });
-    })
+    .then(() => res.send({ message: 'Карточка удалена' }))
     .catch(next);
 };
 
@@ -57,7 +51,7 @@ const unlikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.id,
     { $pull: { likes: req.user._id } },
-    { new: true, runValidators: true },
+    { new: true },
   )
     .then((card) => {
       if (!card) {
