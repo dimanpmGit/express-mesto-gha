@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const rateLimit = require('express-rate-limit');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const usersRouter = require('./routes/users');
 const {
   login,
@@ -30,6 +31,8 @@ const limiter = rateLimit({
 app.use(bodyParser.json());
 app.use(limiter);
 
+app.use(requestLogger); // подключаем логгер запросов
+
 // роуты, не требующие авторизации,
 // например, регистрация и логин
 app.post('/signin', signinValidation, login);
@@ -43,6 +46,8 @@ app.use('/*', (req, res, next) => next(new NotFoundError('Страница не 
 
 // подключаемся к серверу mongo
 mongoose.connect('mongodb://localhost:27017/mestodb', {});
+
+app.use(errorLogger); // подключаем логгер ошибок
 
 // обработчики ошибок
 app.use(errors()); // обработчик ошибок celebrate
